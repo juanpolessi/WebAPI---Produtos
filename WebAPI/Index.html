@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <div>
+        <h3>List of Products</h3>
+        <ul id="listProducts"></ul>
+    </div>
+    <div>
+        <h3>Search By Code</h3>
+        <input type="text" id="txtCode" />
+        <input type="button" id="btnSearch" onclick="Search()" value="Pesquisar" />
+        <div>
+            <span id="product"></span>
+        </div>
+    </div>
+    <div>
+        <h3>Post</h3>
+        <input type="button" id="btnPost" onclick="Post()" value="Inserir" />
+        <div>
+            <span id="post"></span>
+        </div>
+    </div>
+    <div>
+        <h3>Put</h3>
+        <input type="button" id="btnPut" onclick="Put()" value="Inserir/Alterar" />
+        <div>
+            <span id="put"></span>
+        </div>
+    </div>
+    <div>
+        <h3>Delete</h3>
+        <input type="text" id="txtDelete" />
+        <input type="button" id="btnDelete" onclick="Delete()" value="Deletar" />
+        <div>
+            <span id="delete"></span>
+        </div>
+    </div>
+
+    <script src="Scripts/jquery-3.3.1.min.js"></script>
+
+    <script>
+
+        var uri = "api/product";
+        $(document).ready(function () {
+
+            $.getJSON(uri)
+                .done(function (data) {
+                    $.each(data, function (key, item) {
+                        $("<li>", { text: item.Code + " - " + item.Name + " = R$" + item.Value }).appendTo($("#listProducts"));
+                    });
+                });
+        });
+
+        function Search() {
+
+            var code = $("#txtCode").val();
+
+            $.getJSON(uri + "?code=" + code)
+                .done(function (data) {
+                    $("#product").text("Produto: " + data.Name + " = R$" + data.Value);
+                });
+        }
+
+        function Post() {
+            var product = { Code: 10, Name: "Iphone XR", Category: "Celulares", Value: 4000 };
+
+            $.ajax({
+                type: 'POST',
+                url: uri,
+                data: JSON.stringify(product),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (data) {
+                    $("#post").text("Produto cadastrado com sucesso!");
+                }
+            });
+        }
+
+        function Put() {
+            var product = { Code: 20, Name: "Xiaomi", Category: "Celulares", Value: 2500 };
+
+            $.ajax({
+                type: 'PUT',
+                url: uri,
+                data: JSON.stringify(product),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (data) {
+                    $("#put").text("Produto cadastrado/atualizado com sucesso!");
+                }
+            });
+        }
+
+        function Delete() {
+            var code = $("#txtDelete").val();
+
+            $.ajax({
+                type: 'DELETE',
+                url: uri + "?code=" + code,
+                success: function (data) {
+                    $("#delete").text("Produto excluído com sucesso!");
+                }
+            });
+        }
+
+    </script>
+</body>
+</html>
